@@ -1,0 +1,27 @@
+
+server:
+  port: 8084
+
+client:
+  api-gateway:
+    grant-types: password, authorization_code, refresh_token
+    authority: LICENSED_USER
+    scopes: READ
+    name: api-gateway
+    secret: api-gateway
+  registration:
+    name: register
+    secret: register
+  affiliation:
+    name: affiliate
+    secret: affiliate
+
+persistance:
+  url: jdbc:postgresql://localhost:5432/test
+  username: postgres
+  password: postgres
+  driverClassName: org.postgresql.Driver
+
+license-store:
+  file-name: ${LICENSE_STORE_FILE_NAME}
+  file-path: ${LICENSE_STORE_FILE_PATH}

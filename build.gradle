@@ -1,0 +1,56 @@
+plugins {
+    id 'org.springframework.boot' version '2.1.6.RELEASE'
+    id 'java'
+}
+
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.vocera'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    // Spring Boot Starters
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // Swagger
+    implementation 'io.springfox:springfox-swagger2:2.9.2'
+
+    // Spring Security Oauth2
+    implementation 'org.springframework.security.oauth:spring-security-oauth2:2.3.6.RELEASE'
+
+    // XML
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+    implementation 'com.sun.xml.bind:jaxb-core:2.3.0'
+    implementation 'com.sun.xml.bind:jaxb-impl:2.3.1'
+
+    // Postgres
+    runtimeOnly 'org.postgresql:postgresql'
+
+    // Spring Boot Starter Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    // Junit
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.2'
+    testRuntime('org.junit.jupiter:junit-jupiter-engine:5.4.2')
+
+    // H2
+    testImplementation 'com.h2database:h2:1.4.199'
+
+    // Gson
+    testImplementation 'com.google.code.gson:gson:2.8.5'
+}
+
+test {
+    def buildDir = "${project.rootDir}"
+    environment("LICENSE_STORE_FILE_NAME","license-store.txt")
+    environment("LICENSE_STORE_FILE_PATH",buildDir+"/src/main/resources")
+}
