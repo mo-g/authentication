@@ -25,3 +25,8 @@ persistance:
 license-store:
   file-name: ${LICENSE_STORE_FILE_NAME}
   file-path: ${LICENSE_STORE_FILE_PATH}
+
+key-store:
+  file: ${KEY_STORE_FILE}
+  password: ${KEY_STORE_PASS}
+  key-alias: ${KEY_ALIAS}
