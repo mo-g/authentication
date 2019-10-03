@@ -55,7 +55,7 @@ public class LicenseKeyValidatorServiceTest {
     @Test
     public void validLoadUserByUsername() {
         System.out.println("Executing Test for successful userdetails resolution.");
-        UserDetails result = licenseKeyValidatorService.loadUserByUsername("1234");
+        UserDetails result = licenseKeyValidatorService.loadUserByUsername("1");
         assertNotNull(result);
     }
 

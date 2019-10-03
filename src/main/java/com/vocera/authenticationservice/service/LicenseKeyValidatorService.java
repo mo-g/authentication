@@ -7,6 +7,8 @@
 package com.vocera.authenticationservice.service;
 
 import com.vocera.authenticationservice.config.ClientConfig;
+import com.vocera.authenticationservice.entity.FederatedLicense;
+import com.vocera.authenticationservice.exception.FederatedLicenseException;
 import com.vocera.authenticationservice.security.LicenseUser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -35,18 +37,26 @@ public class LicenseKeyValidatorService implements UserDetailsService {
 
     private ClientConfig clientConfig;
 
+    private FederatedLicenseService federatedLicenseService;
+
     @Value("${license-store.file-path}")
     private String filePath;
 
     @Value("${license-store.file-name}")
     private String fileName;
 
-    public LicenseKeyValidatorService(ClientConfig clientConfig) {
+    /**
+     * Constructor for autowiring.
+     *
+     * @param clientConfig
+     * @param federatedLicenseService
+     */
+    public LicenseKeyValidatorService(ClientConfig clientConfig, FederatedLicenseService federatedLicenseService) {
         this.clientConfig = clientConfig;
+        this.federatedLicenseService = federatedLicenseService;
     }
 
     /**
-     *
      * @param licensekey
      * @return
      */
@@ -55,19 +65,22 @@ public class LicenseKeyValidatorService implements UserDetailsService {
     }
 
     /**
-     *
-     * @param username
+     * @param organizationId
      * @return
      * @throws UsernameNotFoundException
      */
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        if(this.checkForKey(username)) {
+    public UserDetails loadUserByUsername(String organizationId) throws UsernameNotFoundException {
+        try {
+            FederatedLicense federation = this.federatedLicenseService.findByFederationId(Long.valueOf(organizationId));
             List<GrantedAuthority> grantedAuths = new ArrayList<>();
             grantedAuths.add(new SimpleGrantedAuthority(clientConfig.getAuthority()));
-            return new LicenseUser(username, username, grantedAuths);
-        } else {
-            throw new UsernameNotFoundException("Invalid Username : "+username);
+            return new LicenseUser(organizationId, organizationId, grantedAuths);
+        } catch (FederatedLicenseException e) {
+            throw new UsernameNotFoundException("Invalid Username : " + organizationId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -78,10 +91,10 @@ public class LicenseKeyValidatorService implements UserDetailsService {
      * @return
      */
     private boolean checkForKey(String licenseKey) {
-        LOGGER.info("License Store Path : "+filePath + "/" +fileName);
-        try(Scanner scanner = new Scanner(new File(filePath, fileName))) {
+        LOGGER.info("License Store Path : " + filePath + "/" + fileName);
+        try (Scanner scanner = new Scanner(new File(filePath, fileName))) {
             while (scanner.hasNext()) {
-                if(licenseKey.equals(scanner.nextLine())) {
+                if (licenseKey.equals(scanner.nextLine())) {
                     return true;
                 }
             }
